@@ -1,17 +1,20 @@
 import express, { json } from 'express';
 import pg from 'pg';
 import cors from 'cors';
+import dotenv from 'dotenv';
+
+dotenv.config();
 
 const app = express();
 app.use(cors());
 app.use(json());
 
 const pool = new pg.Pool({
-  user: process.env.PG_USER,
-  host: 'localhost',
-  database: 'to-do-list',
-  password: 'thegreaton3',
-  port: 5432,
+  user: process.env.VITE_PG_USER,
+  host: process.env.VITE_PG_HOST,
+  database: process.env.VITE_PG_DATABASE,
+  password: process.env.VITE_PG_PASSWORD,
+  port: Number(process.env.VITE_PG_PORT || 5432),
 });
 
 console.log(pool);
