@@ -7,12 +7,11 @@
   import { signOutOfAccount } from '../lib/server/firebase';
   import Loader from '../components/icons/Loader.svelte';
   import Logout from '../components/icons/Logout.svelte';
-  import Menu from '../components/icons/Menu.svelte';
+  import Coffee from '../components/icons/Coffee.svelte';
 
   let user = null;
   let error = null;
   let auth = null;
-  let menuOpen = false;
 
   let isAuthenticated = false;
   let isLoading = true;
@@ -49,14 +48,19 @@
     <Loader />
   {:else if user}
     <main>
-      <h3>To do list</h3>
+      <h3>Q<span>uick</span>T<span>asks</span></h3>
 
       <div class="sign-out">
-        <Menu bind:checked={menuOpen} />
-        {menuOpen}
         <button on:click={signOutOfAccount}>
           <Logout />
         </button>
+      </div>
+
+      <div class="tooltip-container">
+        <a href="https://www.buymeacoffee.com/wleonvil" target="_blank" class="coffee">
+          <Coffee />
+        </a>
+        <span class="tooltip">Buy Me a Coffee</span>
       </div>
 
       <div class="theme-toggle">
@@ -89,6 +93,8 @@
     --background: #f3f3f3;
     --text: black;
     --delete-fill: black;
+    --tooltip-bg: rgb(34, 34, 34);
+    --tooltip-text: white;
     transition: all 0.2s;
   }
 
@@ -97,22 +103,28 @@
     --background: #242424;
     --text: white;
     --delete-fill: white;
+    --tooltip-bg: white;
+    --tooltip-text: rgb(34, 34, 34);
     transition: all 0.2s;
   }
 
   main {
     text-align: center;
-    padding: 1em;
+    padding: 1.8em 1em 1em;
     margin: 0 auto;
   }
 
   h3 {
     color: var(--primary);
     text-transform: uppercase;
-    font-size: 1.5rem;
+    font-size: 1.75rem;
     font-weight: 200;
     line-height: 1.2rem;
     margin: 2rem auto;
+  }
+
+  h3 span {
+    font-size: 1.3rem;
   }
 
   .sign-out {
@@ -133,5 +145,47 @@
     position: absolute;
     top: 12px;
     right: 12px;
+  }
+
+  .tooltip-container {
+    display: flex;
+    position: absolute;
+    top: 18px;
+    left: 50%;
+    margin-left: -12px;
+  }
+
+  .tooltip {
+    position: absolute;
+    bottom: 0;
+    width: max-content;
+    left: 50%;
+    transform: translateX(-50%);
+    padding: 0.3em 0.6em;
+    opacity: 0;
+    pointer-events: none;
+    transition: all 0.6s;
+    background-color: var(--tooltip-bg);
+    border-radius: 12px;
+    color: var(--tooltip-text);
+    cursor: pointer;
+  }
+
+  .tooltip::before {
+    content: '';
+    position: absolute;
+    height: 0.6em;
+    width: 0.6em;
+    top: -0.2em;
+    left: 50%;
+    transform: translate(-50%) rotate(45deg);
+    background-color: var(--tooltip-bg);
+  }
+
+  .tooltip-container:hover .tooltip {
+    bottom: -100%;
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
   }
 </style>

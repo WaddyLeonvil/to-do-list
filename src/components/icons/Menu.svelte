@@ -9,7 +9,17 @@
   <div class="bar bar--3"></div>
 </label>
 
+<slot>
+  <div class="menu">MENU</div>
+</slot>
+
 <style>
+  .menu {
+    width: 200px;
+    padding: 8px;
+    background-color: transparent;
+  }
+
   input {
     display: none;
   }
