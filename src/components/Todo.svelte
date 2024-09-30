@@ -1,23 +1,28 @@
 <script lang="ts">
   import { onMount } from 'svelte';
   import Checkbox from './Checkbox.svelte';
-  import Delete from './Delete.svelte';
+  import Delete from './icons/Delete.svelte';
+  import { getUserToken } from '../lib/server/firebase';
 
   type Task = {
     id: number;
     text: string;
     completed: boolean;
+    user_id: string;
   };
+
+  export let firebase_uid: any;
 
   let tasks: Task[] = [];
   let newTask: string = '';
+  let token = null;
 
   async function addTask() {
     if (newTask.trim()) {
       const res = await fetch('http://localhost:3000/tasks', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ text: newTask, completed: false }),
+        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+        body: JSON.stringify({ firebase_uid: firebase_uid, text: newTask, completed: false }),
       });
       const task = await res.json();
       tasks = [...tasks, task];
@@ -29,7 +34,7 @@
     task.completed = !task.completed;
     await fetch(`http://localhost:3000/tasks/${task.id}`, {
       method: 'PUT',
-      headers: { 'Content-Type': 'application/json' },
+      headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
       body: JSON.stringify(task),
     });
   }
@@ -37,13 +42,25 @@
   async function deleteTask(task) {
     await fetch(`http://localhost:3000/tasks/${task.id}`, {
       method: 'DELETE',
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
     });
     tasks = tasks.filter((t) => t !== task);
   }
 
   onMount(async () => {
-    const res = await fetch('http://localhost:3000/tasks');
-    tasks = await res.json();
+    token = await getUserToken();
+
+    const res = await fetch(`http://localhost:3000/tasks/${firebase_uid}`)
+      .then((res) => res.json())
+      .then((data) => {
+        tasks = Object.values(data).flat();
+        console.log('Tasks:', tasks);
+      })
+      .catch((error) => console.error('Fetch Error:', error));
+    //tasks = Object.values(res.json());
+    //console.log('Tasks', res);
   });
 </script>
 
@@ -54,7 +71,7 @@
   </form>
 </div>
 
-{#each tasks as task, index}
+{#each tasks as task}
   <div class="task">
     <Checkbox>
       <input type="checkbox" checked={task.completed} on:change={() => toggleTask(task)} />
