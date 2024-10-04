@@ -22,18 +22,29 @@
     if (authState === 'login') {
       try {
         const user = await signIn(email, password);
-        console.log('User signed in:', user);
       } catch (error) {
-        console.error('Sign-in failed:', error);
         errorMessage = 'Invalid email or password.';
       }
     } else if (authState === 'signup') {
       try {
         const user = await signUp(email, password);
-        console.log('User signed up. Email: ' + email + '\nPassword: ' + password);
       } catch (error) {
-        console.error('Sign Up failed:', error);
-        errorMessage = 'Sign up failed. Please try again';
+        switch (error.code) {
+          case 'auth/invalid-email':
+            errorMessage = 'Invalid email.';
+            break;
+          case 'auth/email-already-in-use':
+            errorMessage = 'This email is already in use.';
+            break;
+          case 'auth/weak-password':
+            errorMessage = 'Passwords should be at least 6 characters.';
+            break;
+          case 'auth/network-request-failed':
+            errorMessage = 'There was a network error, please try again.';
+            break;
+          default:
+            errorMessage = 'There was a problem creating your account.';
+        }
       }
     }
   }
@@ -43,7 +54,15 @@
   <div class="radio-inputs">
     {#each authStateOptions as authMode}
       <label class="radio">
-        <input type="radio" name="radio" bind:group={authState} value={authMode.value} />
+        <input
+          type="radio"
+          name="radio"
+          bind:group={authState}
+          value={authMode.value}
+          on:change={() => {
+            errorMessage = '';
+          }}
+        />
         <span class="name">{authMode.label}</span>
       </label>
     {/each}

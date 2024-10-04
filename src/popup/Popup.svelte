@@ -45,10 +45,12 @@
 
 <template>
   {#if isLoading}
-    <Loader />
+    <div class="loader-container">
+      <Loader />
+    </div>
   {:else if user}
     <main>
-      <h3>Q<span>uick</span>T<span>asks</span></h3>
+      <div class="header">Q<span>uick</span>T<span>asks</span></div>
 
       <div class="sign-out">
         <button on:click={signOutOfAccount}>
@@ -114,16 +116,15 @@
     margin: 0 auto;
   }
 
-  h3 {
+  .header {
     color: var(--primary);
     text-transform: uppercase;
     font-size: 1.75rem;
-    font-weight: 200;
-    line-height: 1.2rem;
-    margin: 2rem auto;
+    font-weight: 400;
+    margin: 1.5rem auto 1rem;
   }
 
-  h3 span {
+  .header span {
     font-size: 1.3rem;
   }
 
@@ -164,7 +165,7 @@
     padding: 0.3em 0.6em;
     opacity: 0;
     pointer-events: none;
-    transition: all 0.6s;
+    transition: all 0.5s;
     background-color: var(--tooltip-bg);
     border-radius: 12px;
     color: var(--tooltip-text);
@@ -187,5 +188,9 @@
     opacity: 1;
     visibility: visible;
     pointer-events: auto;
+  }
+
+  .loader-container {
+    margin: 120px auto;
   }
 </style>

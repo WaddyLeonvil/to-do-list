@@ -17,8 +17,6 @@ const pool = new pg.Pool({
   port: Number(process.env.VITE_PG_PORT || 5432),
 });
 
-console.log(pool);
-
 // Create a new task
 app.post('/tasks', async (req, res) => {
   const { firebase_uid, text } = req.body;
