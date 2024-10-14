@@ -5,6 +5,7 @@ import {
   createUserWithEmailAndPassword,
   signOut,
   sendEmailVerification,
+  sendPasswordResetEmail,
 } from 'firebase/auth';
 import { getAnalytics } from 'firebase/analytics';
 
@@ -61,6 +62,16 @@ export async function signOutOfAccount() {
   } catch (error) {
     console.error('Error signing out:', error.message);
     throw error;
+  }
+}
+
+export async function resetPassword(email) {
+  try {
+    await sendPasswordResetEmail(auth, email).then(() => {
+      console.log('Password reset email has been sent.');
+    });
+  } catch (error) {
+    console.error(error);
   }
 }
 

@@ -1,5 +1,5 @@
 <script>
-  import { auth, signIn, signUp } from '../lib/server/firebase';
+  import { auth, resetPassword, signIn, signUp } from '../lib/server/firebase';
 
   const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
 
@@ -105,7 +105,20 @@
       <button>{authState === 'login' ? 'Log In' : 'Sign Up'}</button>
     </form>
   {:else}
-    This is the forgot password place
+    <div class="header">Change Password</div>
+
+    <div>
+      Enter your email and click the button below to be sent an email in order to reset your
+      password.
+    </div>
+    <br /><br />
+
+    <div class="input-group">
+      <input required="" name="email" bind:value={email} class:valid={email != ''} />
+      <label class="user-label" for="email">Email</label>
+    </div>
+
+    <button type="button" on:click={() => resetPassword(email)}> Send E-mail </button>
   {/if}
 </div>
 
