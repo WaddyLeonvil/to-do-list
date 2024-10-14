@@ -68,7 +68,15 @@
       <div class="theme-toggle">
         <ThemeToggle />
       </div>
-      <Todo firebase_uid={user.uid} />
+
+      {#if user.emailVerified}
+        <Todo firebase_uid={user.uid} />
+      {:else}
+        Please verify email before using QuickTasks. <br /><br />
+        We have sent an email to {user.email} in order to verify. <br /><br />
+        If you would like another email to be sent, click on the button below. <br />
+        <button type="button">Button</button>
+      {/if}
     </main>
   {:else}
     <SignIn />

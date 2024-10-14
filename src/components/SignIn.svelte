@@ -6,6 +6,7 @@
   let email = '';
   let password = '';
   let errorMessage = '';
+  let forgotPass = false;
   let authState = 'login';
   let authStateOptions = [
     {
@@ -51,47 +52,61 @@
 </script>
 
 <div class="container">
-  <div class="radio-inputs">
-    {#each authStateOptions as authMode}
-      <label class="radio">
-        <input
-          type="radio"
-          name="radio"
-          bind:group={authState}
-          value={authMode.value}
-          on:change={() => {
-            errorMessage = '';
-          }}
-        />
-        <span class="name">{authMode.label}</span>
-      </label>
-    {/each}
-  </div>
+  {#if forgotPass === false}
+    <div class="radio-inputs">
+      {#each authStateOptions as authMode}
+        <label class="radio">
+          <input
+            type="radio"
+            name="radio"
+            bind:group={authState}
+            value={authMode.value}
+            on:change={() => {
+              errorMessage = '';
+            }}
+          />
+          <span class="name">{authMode.label}</span>
+        </label>
+      {/each}
+    </div>
 
-  <form on:submit|preventDefault={handleSignIn}>
-    <div class="input-group">
-      <input required="" name="email" bind:value={email} class:valid={email != ''} />
-      <label class="user-label" for="email">Email</label>
-    </div>
-    <div class="input-group">
-      <input
-        required=""
-        name="password"
-        bind:value={password}
-        class:valid={password != ''}
-        autocomplete="off"
-        type="password"
-      />
-      <label class="user-label" for="password">Password</label>
-    </div>
-    {#if errorMessage}
-      <div class="error">
-        {errorMessage}
+    <form on:submit|preventDefault={handleSignIn}>
+      <div class="input-group">
+        <input required="" name="email" bind:value={email} class:valid={email != ''} />
+        <label class="user-label" for="email">Email</label>
       </div>
-    {/if}
+      <div class="input-group">
+        <input
+          required=""
+          name="password"
+          bind:value={password}
+          class:valid={password != ''}
+          autocomplete="off"
+          type="password"
+        />
+        <label class="user-label" for="password">Password</label>
+      </div>
+      {#if errorMessage}
+        <div class="error">
+          {errorMessage}
+        </div>
+      {/if}
 
-    <button>{authState === 'login' ? 'Log In' : 'Sign Up'}</button>
-  </form>
+      {#if authState === 'login'}
+        <button
+          type="button"
+          class="forgot"
+          on:click={() => {
+            forgotPass = true;
+          }}>Forgot Password?</button
+        >
+      {/if}
+
+      <button>{authState === 'login' ? 'Log In' : 'Sign Up'}</button>
+    </form>
+  {:else}
+    This is the forgot password place
+  {/if}
 </div>
 
 <style>
@@ -159,10 +174,19 @@
     background-color: #1a73e8;
     transition: all 0.25s;
     cursor: pointer;
+    font-family: 'Montserrat';
   }
 
-  button:hover {
+  button:hover:not(.forgot) {
     background-color: #2180fc;
+  }
+
+  .forgot {
+    width: fit-content;
+    padding: 0;
+    margin-bottom: 16px;
+    background-color: transparent;
+    color: #2196f3;
   }
 
   .error {

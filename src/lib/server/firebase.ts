@@ -4,6 +4,7 @@ import {
   signInWithEmailAndPassword,
   createUserWithEmailAndPassword,
   signOut,
+  sendEmailVerification,
 } from 'firebase/auth';
 import { getAnalytics } from 'firebase/analytics';
 
@@ -30,7 +31,11 @@ export async function getUserToken() {
 
 export async function signUp(email, password) {
   try {
-    const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+    const userCredential = await createUserWithEmailAndPassword(auth, email, password).then(
+      (cred) => {
+        sendEmailVerification(cred.user);
+      },
+    );
     await saveUserInDatabase(userCredential.user);
 
     return userCredential.user;
