@@ -1,11 +1,13 @@
 <script>
   import { auth, resetPassword, signIn, signUp } from '../lib/server/firebase';
+  import Back from './icons/Back.svelte';
 
   const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
 
   let email = '';
   let password = '';
   let errorMessage = '';
+  let successMessage = '';
   let forgotPass = false;
   let authState = 'login';
   let authStateOptions = [
@@ -49,10 +51,28 @@
       }
     }
   }
+
+  async function handleReset() {
+    try {
+      await resetPassword(email);
+    } catch (error) {
+      switch (error.code) {
+        case 'auth/missing-email':
+          errorMessage = 'Please input an email.';
+          break;
+        case 'auth/invalid-email':
+          errorMessage = 'The email you inputted is invalid.';
+          break;
+        default:
+          errorMessage = 'There was a problem sending the email.';
+      }
+    }
+  }
 </script>
 
 <div class="container">
   {#if forgotPass === false}
+    <div class="header">QuickTasks</div>
     <div class="radio-inputs">
       {#each authStateOptions as authMode}
         <label class="radio">
@@ -105,20 +125,41 @@
       <button>{authState === 'login' ? 'Log In' : 'Sign Up'}</button>
     </form>
   {:else}
+    <button
+      class="back"
+      on:click={() => {
+        forgotPass = false;
+        errorMessage = '';
+        successMessage = '';
+      }}
+    >
+      <Back />
+    </button>
     <div class="header">Change Password</div>
 
     <div>
       Enter your email and click the button below to be sent an email in order to reset your
       password.
     </div>
-    <br /><br />
 
-    <div class="input-group">
+    <div class="input-group change-input">
       <input required="" name="email" bind:value={email} class:valid={email != ''} />
       <label class="user-label" for="email">Email</label>
     </div>
 
-    <button type="button" on:click={() => resetPassword(email)}> Send E-mail </button>
+    {#if errorMessage}
+      <div class="error">
+        {errorMessage}
+      </div>
+    {/if}
+
+    {#if successMessage}
+      <div class="success">
+        {successMessage}
+      </div>
+    {/if}
+
+    <button type="button" on:click={handleReset}> Send Reset E-mail </button>
   {/if}
 </div>
 
@@ -190,7 +231,7 @@
     font-family: 'Montserrat';
   }
 
-  button:hover:not(.forgot) {
+  button:hover:not(.forgot, .back) {
     background-color: #2180fc;
   }
 
@@ -207,6 +248,14 @@
     justify-content: center;
     width: 100%;
     color: red;
+    margin-bottom: 8px;
+  }
+
+  .success {
+    display: flex;
+    justify-content: center;
+    width: 100%;
+    color: rgb(0, 220, 0);
     margin-bottom: 8px;
   }
 
@@ -249,5 +298,15 @@
   .radio-inputs .radio input:checked + .name {
     background-color: #fff;
     color: black;
+  }
+
+  .change-input {
+    margin: 20px 0;
+  }
+
+  .back {
+    width: fit-content;
+    padding: 0;
+    background-color: transparent;
   }
 </style>
