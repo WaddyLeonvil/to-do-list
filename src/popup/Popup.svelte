@@ -8,6 +8,7 @@
   import Loader from '../components/icons/Loader.svelte';
   import Logout from '../components/icons/Logout.svelte';
   import Coffee from '../components/icons/Coffee.svelte';
+  import Logo from '../components/icons/Logo.svelte';
 
   let user = null;
   let error = null;
@@ -50,7 +51,8 @@
     </div>
   {:else if user}
     <main>
-      <div class="header">Q<span>uick</span>T<span>asks</span></div>
+      <!-- <div class="header">Q<span>uick</span>T<span>asks</span></div> -->
+      <Logo />
 
       <div class="sign-out">
         <button on:click={signOutOfAccount}>

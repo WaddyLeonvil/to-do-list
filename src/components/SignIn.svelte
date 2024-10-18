@@ -216,7 +216,7 @@
   input:focus ~ label,
   input.valid ~ label {
     transform: translateY(-50%) scale(0.8);
-    background-color: #212121;
+    background-color: #242424;
     padding: 0 0.2em;
   }
 
